@@ -1,0 +1,10 @@
+{
+	"extends": "@sindresorhus/tsconfig",
+	"compilerOptions": {
+		"jsx": "react",
+		"esModuleInterop": true,
+		"outDir": "dist",
+		"strict": true
+	},
+	"include": ["source"]
+}
