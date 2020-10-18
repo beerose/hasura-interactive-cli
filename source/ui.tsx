@@ -4,6 +4,7 @@ import SelectInput from "ink-select-input";
 import TextInput from "ink-text-input";
 import Gradient from "ink-gradient";
 import BigText from "ink-big-text";
+import Link from "ink-link";
 
 import { HelpBar } from "./components/HelpBar";
 import { commandsConfig, Command } from "./cli-spec";
@@ -371,6 +372,16 @@ const App: FC<{ flags: any; args: string[] }> = ({ args }) => {
 				<BigText font="tiny" text="Hasura" />
 			</Gradient>
 			<Main args={args} />
+			<Box marginBottom={2}>
+				<Text dimColor>Need help? Check out the </Text>
+				<Link
+					url="https://hasura.io/docs/1.0/graphql/core/hasura-cli/index.html"
+					fallback={false}
+				>
+					<Text color="green">docs</Text>
+					<Text dimColor>.</Text>
+				</Link>
+			</Box>
 		</Box>
 	);
 };
