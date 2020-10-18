@@ -2,10 +2,12 @@ export type Command = Record<
 	string,
 	| {
 			commands: Command;
+			desc?: string;
 	  }
 	| {
 			args: Option[];
 			flags: Option[];
+			desc?: string;
 	  }
 >;
 
@@ -31,6 +33,7 @@ const baseOptions = [
 
 export const commandsConfig: Command = {
 	init: {
+		desc: "Initialize a directory for Hasura GraphQL engine migrations",
 		args: [{ key: "project-name", label: "Name of your project: " }],
 		flags: [
 			{
@@ -57,10 +60,12 @@ export const commandsConfig: Command = {
 		],
 	},
 	console: {
+		desc: "Open the console to manage the database and try out APIs",
 		args: [],
 		flags: [],
 	},
 	migrate: {
+		desc: "Manage migrations on the database",
 		commands: {
 			apply: {
 				commands: {},
@@ -71,6 +76,7 @@ export const commandsConfig: Command = {
 		},
 	},
 	actions: {
+		desc: "Manage actions on hasura",
 		commands: {
 			create: { commands: {} },
 			codegen: { commands: {} },
@@ -78,16 +84,18 @@ export const commandsConfig: Command = {
 		},
 	},
 	metadata: {
+		desc: "Manage Hasura GraphQL engine metadata saved in the database",
 		commands: {
-			apply: { commands: {} },
-			clear: { commands: {} },
-			diff: { commands: {} },
-			export: { commands: {} },
-			inconsistency: { commands: {} },
-			reload: { commands: {} },
+			// apply: { commands: {} },
+			// clear: { commands: {} },
+			// diff: { commands: {} },
+			// export: { commands: {} },
+			// inconsistency: { commands: {} },
+			// reload: { commands: {} },
 		},
 	},
 	version: {
+		desc: "Print the Hasura CLI version",
 		args: [],
 		flags: [],
 	},

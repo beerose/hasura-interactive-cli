@@ -8,6 +8,8 @@ import Link from "ink-link";
 
 import { HelpBar } from "./components/HelpBar";
 import { commandsConfig, Command } from "./cli-spec";
+import { CommandItemWithDesc } from "./components/CommandItemWithDesc";
+import { FlagItemWithDesc } from "./components/FlagItemWithDesc";
 
 type State = {
 	status:
@@ -59,10 +61,11 @@ const CommandSelect = ({
 		<>
 			<SelectInput
 				items={Object.keys(config.commands).map((item) => ({
-					label: item,
+					label: `${item}; ${config.commands[item].desc}`,
 					value: item,
 				}))}
 				onSelect={(item) => onSelect(item.value)}
+				itemComponent={CommandItemWithDesc}
 			/>
 			<HelpBar type={root ? "root" : "select"} />
 		</>
@@ -195,28 +198,9 @@ const Flags = ({
 						label: flag.label,
 					})),
 				]}
-				itemComponent={(props) => {
-					if (props.label === "done") {
-						return (
-							<Text bold color="redBright">
-								{Object.keys(values).length ? "Done" : "Skip"}
-							</Text>
-						);
-					}
-
-					return (
-						<Text>
-							{props.label}
-							{values[props.label] && (
-								<Text color="red"> {values[props.label]}</Text>
-							)}
-							<Text color="gray" italic dimColor={!props.isSelected}>
-								{" "}
-								— {config.flags.find((f) => f.label === props.label)?.desc}
-							</Text>
-						</Text>
-					);
-				}}
+				itemComponent={(props) => (
+					<FlagItemWithDesc {...props} config={config.flags} values={values} />
+				)}
 				onSelect={(v) => setSelected(v.label)}
 			/>
 			<HelpBar type="select" back />
