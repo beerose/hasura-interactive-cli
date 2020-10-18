@@ -6,10 +6,8 @@ import Gradient from "ink-gradient";
 import BigText from "ink-big-text";
 import Link from "ink-link";
 
-import { HelpBar } from "./components/HelpBar";
 import { commandsConfig, Command } from "./cli-spec";
-import { CommandItemWithDesc } from "./components/CommandItemWithDesc";
-import { FlagItemWithDesc } from "./components/FlagItemWithDesc";
+import { HelpBar, CommandItemWithDesc, FlagItemWithDesc } from "./components";
 
 type State = {
 	status:
