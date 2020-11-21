@@ -8,6 +8,7 @@ import Link from "ink-link";
 
 import { commandsConfig, Command } from "./cli-spec";
 import { HelpBar, CommandItemWithDesc, FlagItemWithDesc } from "./components";
+import { RunCommand } from "./RunCommand";
 
 type State = {
 	status:
@@ -16,7 +17,7 @@ type State = {
 		| "command"
 		| "args"
 		| "exiting"
-		| "done"
+		| "run-command"
 		| "flags";
 	command: string | null;
 	subCommands: string[];
@@ -32,6 +33,7 @@ type Action =
 	| { type: "go-to-flags" }
 	| { type: "go-back" }
 	| { type: "set-flags"; payload: State["flags"][0] }
+	| { type: "run-command" }
 	| { type: "exit" };
 
 const initialState: State = {
@@ -109,12 +111,10 @@ const ArgsInputs = ({
 				<TextInput
 					value={values[currArg.key] || ""}
 					onChange={(v) => {
-						console.log({ v });
 						if (v) setValues((prev) => ({ ...prev, [currArg.key]: v }));
 					}}
 					onSubmit={(v) => {
 						if (v) {
-							console.log({ v });
 							onSubmit({ key: currArg.key, value: values[currArg.key] });
 							setIndex((prev) => prev + 1);
 						}
@@ -144,12 +144,12 @@ const Flags = ({
 	useInput((_, key) => {
 		if (key.leftArrow) {
 			if (selected) {
-				setSelected("");
 				setValues((prev) => {
 					const next = { ...prev };
 					delete next[selected];
 					return next;
 				});
+				setSelected("");
 			}
 		}
 	});
@@ -170,7 +170,7 @@ const Flags = ({
 						<TextInput
 							value={values[selected] || ""}
 							onChange={(v) => {
-								setValues((prev) => ({ ...prev, [selected]: v }));
+								if (v) setValues((prev) => ({ ...prev, [selected]: v }));
 							}}
 							onSubmit={() => {
 								setSelected("");
@@ -199,14 +199,26 @@ const Flags = ({
 				itemComponent={(props) => (
 					<FlagItemWithDesc {...props} config={config.flags} values={values} />
 				)}
-				onSelect={(v) => setSelected(v.label)}
+				onSelect={(v) => {
+					if (v.value === "done") {
+						onFinish();
+						return;
+					}
+					setSelected(v.label);
+				}}
 			/>
 			<HelpBar type="select" back />
 		</>
 	);
 };
 
-const Main = ({}: { args: string[] }) => {
+const Main = ({
+	onRootCommandSelect,
+}: {
+	args: string[];
+	onRootCommandSelect: () => void;
+}) => {
+	// const { exit } = useApp();
 	const [state, dispatch] = useReducer((s: State, action: Action): State => {
 		switch (action.type) {
 			case "set-root-command":
@@ -254,6 +266,9 @@ const Main = ({}: { args: string[] }) => {
 					return { ...s, status: "args" };
 				}
 				return s;
+			case "run-command": {
+				return { ...s, status: "run-command" };
+			}
 			case "exit":
 				return { ...s, status: "exiting" };
 			default:
@@ -280,8 +295,9 @@ const Main = ({}: { args: string[] }) => {
 					onSelect={(item) => {
 						dispatch({
 							type: "set-root-command",
-							payload: item as string,
+							payload: item,
 						});
+						onRootCommandSelect();
 					}}
 				/>
 			);
@@ -321,7 +337,7 @@ const Main = ({}: { args: string[] }) => {
 			return (
 				<Flags
 					config={currentConfig}
-					onFinish={() => dispatch({ type: "go-to-flags" })}
+					onFinish={() => dispatch({ type: "run-command" })}
 					onSubmit={(payload: { key: string; value: string }) =>
 						dispatch({
 							type: "set-args",
@@ -330,14 +346,30 @@ const Main = ({}: { args: string[] }) => {
 					}
 				/>
 			);
+		case "run-command":
+			return (
+				<RunCommand
+					{...state}
+					rootCommand={state.command!}
+					renderResult={
+						"renderResult" in currentConfig
+							? currentConfig.renderResult
+							: undefined
+					}
+					onFinish={() => {
+						// write to stdout before exit?
+						// exit();
+					}}
+				/>
+			);
 
-		case "done":
 		case "exiting":
 	}
 	return null;
 };
 
 const App: FC<{ flags: any; args: string[] }> = ({ args }) => {
+	const [showBanner, setShowBanner] = useState(true);
 	const { exit } = useApp();
 
 	useInput((_, key) => {
@@ -350,10 +382,12 @@ const App: FC<{ flags: any; args: string[] }> = ({ args }) => {
 
 	return (
 		<Box flexDirection="column">
-			<Gradient name="passion">
-				<BigText font="tiny" text="Hasura" />
-			</Gradient>
-			<Main args={args} />
+			{showBanner && (
+				<Gradient name="passion">
+					<BigText font="tiny" text="Hasura" />
+				</Gradient>
+			)}
+			<Main args={args} onRootCommandSelect={() => setShowBanner(false)} />
 			<Box marginBottom={2}>
 				<Text dimColor>Need help? Check out the </Text>
 				<Link

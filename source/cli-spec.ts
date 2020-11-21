@@ -8,6 +8,7 @@ export type Command = Record<
 			args: Option[];
 			flags: Option[];
 			desc?: string;
+			renderResult?: (data: string) => JSX.Element;
 	  }
 >;
 
@@ -98,5 +99,6 @@ export const commandsConfig: Command = {
 		desc: "Print the Hasura CLI version",
 		args: [],
 		flags: [],
+		renderResult: (data: string) => JSON.parse(data).version,
 	},
 };

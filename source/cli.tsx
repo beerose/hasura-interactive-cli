@@ -8,21 +8,9 @@ const cli = meow(
 	`
 	Usage
 	  $ hasura-cli-ink <input>
-
-	Options
-		--name  Your name
-
-	Examples
-	  $ hasura-cli-ink --name=Jane
-	  Hello, Jane
-`,
-	{
-		flags: {
-			name: {
-				type: "string",
-			},
-		},
-	}
+`
 );
 
-render(<App flags={cli.flags} args={cli.input} />);
+render(<App flags={cli.flags} args={cli.input} />, {
+	// debug: true,
+});
