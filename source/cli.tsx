@@ -12,5 +12,5 @@ const cli = meow(
 );
 
 render(<App flags={cli.flags} args={cli.input} />, {
-	// debug: true,
+	debug: false,
 });

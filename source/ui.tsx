@@ -218,7 +218,7 @@ const Main = ({
 	args: string[];
 	onRootCommandSelect: () => void;
 }) => {
-	// const { exit } = useApp();
+	const { exit } = useApp();
 	const [state, dispatch] = useReducer((s: State, action: Action): State => {
 		switch (action.type) {
 			case "set-root-command":
@@ -357,8 +357,8 @@ const Main = ({
 							: undefined
 					}
 					onFinish={() => {
-						// write to stdout before exit?
-						// exit();
+						// todo: write to stdout before exit?
+						exit();
 					}}
 				/>
 			);

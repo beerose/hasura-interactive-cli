@@ -62,6 +62,14 @@ export const commandsConfig: Command = {
 			},
 			...baseOptions,
 		],
+		renderResult: (data: string) => (
+			<>
+				<Box paddingBottom={1}>
+					<Text color="magentaBright">hasura init</Text>
+				</Box>
+				<Text>{JSON.parse(data).msg}</Text>
+			</>
+		),
 	},
 	console: {
 		desc: "Open the console to manage the database and try out APIs",
