@@ -1,3 +1,6 @@
+import React from "react";
+import { Box, Text } from "ink";
+
 export type Command = Record<
 	string,
 	| {
@@ -99,6 +102,13 @@ export const commandsConfig: Command = {
 		desc: "Print the Hasura CLI version",
 		args: [],
 		flags: [],
-		renderResult: (data: string) => JSON.parse(data).version,
+		renderResult: (data: string) => (
+			<>
+				<Box paddingBottom={1}>
+					<Text color="magentaBright">hasura cli version</Text>
+				</Box>
+				<Text>{JSON.parse(data).version}</Text>
+			</>
+		),
 	},
 };

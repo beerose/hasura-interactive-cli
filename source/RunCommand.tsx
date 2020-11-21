@@ -28,7 +28,7 @@ export const RunCommand = ({
 		)}`.trim();
 		exec(finalCommand, (err, stdout) => {
 			if (err) {
-				console.error(`exec error: ${err}`);
+				//
 				return;
 			}
 			setResult(stdout);
@@ -40,10 +40,7 @@ export const RunCommand = ({
 		<Box paddingY={1}>
 			{result ? (
 				<Box borderStyle="single" flexDirection="column" paddingX={1}>
-					<Box paddingBottom={1}>
-						<Text color="magentaBright">hasura {rootCommand}</Text>
-					</Box>
-					<Text>{renderResult ? renderResult(result) : result}</Text>
+					{renderResult ? renderResult(result) : result}
 				</Box>
 			) : (
 				<Text color="magenta">
